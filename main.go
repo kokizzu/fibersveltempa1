@@ -37,22 +37,28 @@ func main() {
 
 	// when using this method, when deploying, only need to copy the binary only
 	tc := Z.FromString(indexHtml, true)
-	app.
-		Get("/", func(c *fiber.Ctx) error {
-			b := bytes.Buffer{}
-			tc.Render(&b, M.SX{
-				`title`: `test`,
-				`obj1`: M.SX{
-					`a`: 1,
-					`b`: 2,
-				},
-				`arr`:  users,
-				`str1`: `something`,
-			})
-
-			c.Set(`Content-Type`, `text/html`)
-			return c.SendString(b.String())
+	app.Get("/", func(c *fiber.Ctx) error {
+		b := bytes.Buffer{}
+		tc.Render(&b, M.SX{
+			`title`: `test`,
+			`obj1`: M.SX{
+				`a`: 1,
+				`b`: 2,
+			},
+			`arr`:  users,
+			`str1`: `something`,
 		})
+
+		c.Set(`Content-Type`, `text/html`)
+		return c.SendString(b.String())
+	})
+
+	app.Post("/get-users", func(ctx *fiber.Ctx) error {
+		for z := range users {
+			users[z].Age += 1
+		}
+		return ctx.JSON(users)
+	})
 
 	log.Fatal(app.Listen(":3001"))
 }

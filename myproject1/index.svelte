@@ -4,21 +4,29 @@
   import Links from './_components/links.svelte'
   
   let a = '#{title}'
-  let b = JSON.stringify({/* obj1 */});
-  let c = JSON.stringify([/* arr */]);
-  let d = '/*! str1 */';
+  let b = {/* obj1 */};
+  let users = [/* arr */];
+  let errMsg = '/*! str1 */';
 
   function doSomething() {
 	  a = 'something'
-	  fetch('', {}).then(() => {
-
-	  }).catch(function(){
-
+	  fetch('/get-users', {
+		  method: 'POST',
+	  }).then(async (res) => {
+			users = await res.json()
+	  }).catch(function(err){
+			errMsg = err
 	  })
   }
 </script>
 
-{a}, {b}, {c}, {d}
-<button onclick="doSomething()">Something</button>
-<Button title="something"></Button>
+{a}, {JSON.stringify(b)}, {errMsg}
+
+<ul>
+	{#each users as user}
+		<li>{user.Name} {user.Age}</li>
+		{/each}
+</ul>
+
+<button on:click={() => {doSomething()}}>Something</button>
 <Links></Links>
